@@ -1,7 +1,4 @@
-import p1_img from "../assets/p1_img.jpg";
-import p2_img from "../assets/p2_img.jpg";
-import p3_img from "../assets/p3_img.jpg";
-import p4_img from "../assets/p4_img.jpg";
+
 
 // const productData = [{
 //         id: 1,

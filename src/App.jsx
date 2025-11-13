@@ -8,9 +8,7 @@ import About from "./component/About/About.jsx";
 import Product from "./component/Product/Product.jsx";
 import DisplayProduct from "./component/Product/DisplayProduct.jsx";
 import Cart from "./component/Cart/Cart.jsx"
-import LoginSignup from "./component/LoginSignup/LoginSignup.jsx";
-import WebFont from "webfontloader";
-import { useEffect } from "react";
+
 
 
 function App() {
