@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import logo from "../../../assets/logo[1].png";
 import { FaRegUser } from "react-icons/fa6";
 import { FiSearch } from "react-icons/fi";
 import { HiOutlineShoppingBag } from "react-icons/hi2";
@@ -14,43 +13,25 @@ const Header = () => {
   const [shadow, setShadow] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
 
-  // toggle functionality for small screens
-  const menu = () => {
-    setToggle(!toggle);
-  };
+  const menu = () => setToggle(!toggle);
 
-  // overscroll y navbar shadow
-  const handleScroll = () => {
-    setShadow(window.scrollY > 0);
-  };
+  const handleScroll = () => setShadow(window.scrollY > 0);
 
   useEffect(() => {
     window.addEventListener("scroll", handleScroll);
-
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-
-  // list items of navbar
 
   const links = [
     { path: "/", label: "Home" },
     { path: "/about", label: "About" },
-    { path: "/product", label: "Product" },
+    { path: "/product", label: "Shop" },
+    { path: "/contact", label: "Contact" },
   ];
 
-  // signUp login form show , hide functionality
+  const handleLoginClick = () => setShowLogin(true);
+  const handleCloseLogin = () => setShowLogin(false);
 
-  const handleLoginClick = () => {
-    setShowLogin(true);
-  };
-
-  const handleCloseLogin = () => {
-    setShowLogin(false);
-  };
-
-  //  Cart items count
   const cartItems = useSelector((state) => state.cart.cartItems);
   const totalCartItems = Object.values(cartItems).reduce(
     (acc, quantity) => acc + quantity,
@@ -60,34 +41,38 @@ const Header = () => {
   return (
     <div
       className={`top-0 z-50 w-full fixed transition-shadow duration-300 ${
-        shadow ? "shadow-lg" : ""
+        shadow ? "shadow-md bg-white/95 backdrop-blur-md" : "bg-[#FFFDF8]"
       }`}
     >
-      <nav className=" h-16 py-2 px-3 md:px-20 flex items-center justify-between bg-white text-gray-800">
-        {/*  Open close menu  */}
-        <div className=" lg:hidden flex flex-col items-start justify-center self-center h-6 space-y-1 cursor-pointer  text-3xl">
-          {" "}
+      <nav className="h-16 py-2 px-4 md:px-20 flex items-center justify-between text-[#3B3A2F]">
+        {/* Mobile Menu Icon */}
+        <div className="lg:hidden flex items-center text-3xl cursor-pointer">
           {toggle ? (
             <HiOutlineMenuAlt1 onClick={menu} />
           ) : (
             <IoClose onClick={menu} />
-          )}{" "}
+          )}
         </div>
-        {/*  Logo  */}
-        <div className="logo text-center">
-          <img src={logo} alt="" className="lg:w-52 w-40" />
-        </div>
-        {/*  Navbar list items */}
-        <ul className="hidden text-primary lg:flex gap-5">
+
+        {/* Brand Logo */}
+<div className="logo font-bold text-2xl md:text-3xl tracking-wider">
+  <NavLink to="/" className="font-playfair italic">
+    <span className="text-[#C9A54A]">Golden</span>
+    <span className="text-[#B97B3C] font-serif">Roots</span>
+  </NavLink>
+</div>
+
+        {/* Desktop Menu */}
+        <ul className="hidden lg:flex gap-6 text-[15px] font-semibold">
           {links.map(({ path, label }) => (
             <li key={path}>
               <NavLink
                 to={path}
                 className={({ isActive }) =>
-                  `block cursor-pointer font-semibold border-b-2 py-1 duration-300 hover:text-secondary  ${
+                  `block cursor-pointer border-b-2 py-1 duration-300 ${
                     isActive
-                      ? "text-secondary border-secondary"
-                      : "border-transparent"
+                      ? "text-primary border-primary"
+                      : "text-[#3B3A2F] border-transparent hover:text-primary"
                   }`
                 }
               >
@@ -96,47 +81,47 @@ const Header = () => {
             </li>
           ))}
         </ul>
-        {/*  Navbar icons  */}
-        <div className=" font-bold flex md:gap-5 gap-2">
-          <FiSearch className="cursor-pointer text-xl" />
 
-          {/* Shopping Cart  */}
+        {/* Navbar Icons */}
+        <div className="flex items-center gap-3 md:gap-6 text-xl">
+          <FiSearch className="cursor-pointer hover:text-primary transition-colors" />
+
+          {/* Cart */}
           <NavLink to="/cart" className="relative">
-            <HiOutlineShoppingBag className="cursor-pointer text-xl" />
-            <div className="absolute -top-2 -right-2 w-4 h-4 text-xs font-medium flex justify-center items-center bg-secondary text-white rounded-full">
+            <HiOutlineShoppingBag className="cursor-pointer hover:text-primary transition-colors" />
+            <div className="absolute -top-2 -right-2 w-4 h-4 text-xs font-medium flex justify-center items-center bg-primary text-white rounded-full">
               {totalCartItems}
             </div>
           </NavLink>
 
+          {/* User/Login */}
           <FaRegUser
             onClick={handleLoginClick}
-            className="cursor-pointer text-xl"
+            className="cursor-pointer hover:text-primary transition-colors"
           />
           {showLogin && (
-            <LoginModal
-              isOpen={showLogin}
-              onClose={() => setShowLogin(false)}
-            />
+            <LoginModal isOpen={showLogin} onClose={handleCloseLogin} />
           )}
-        </div>{" "}
+        </div>
       </nav>
-      {/*  sidebar rendering logic  */}
+
+      {/* Mobile Sidebar */}
       <div
-        className={` w-full bg-white text-primary lg:hidden block transition-transform duration-500 absolute ${
-          toggle ? " -translate-x-full" : ""
+        className={`lg:hidden absolute bg-[#FFFDF8] w-full text-[#3B3A2F] transition-transform duration-500 ${
+          toggle ? "-translate-x-full" : "translate-x-0"
         }`}
       >
-        {/*  sidebar list items */}
-        <ul className="py-5 space-y-5 flex flex-col items-center">
+        <ul className="py-6 space-y-5 flex flex-col items-center font-semibold">
           {links.map(({ path, label }) => (
             <li key={path}>
               <NavLink
                 to={path}
+                onClick={menu}
                 className={({ isActive }) =>
-                  `block cursor-pointer font-semibold border-b-2 py-2 duration-300 hover:text-secondary  ${
+                  `block cursor-pointer border-b-2 py-2 duration-300 ${
                     isActive
-                      ? "text-secondary border-secondary"
-                      : "border-transparent"
+                      ? "text-primary border-primary"
+                      : "text-[#3B3A2F] border-transparent hover:text-primary"
                   }`
                 }
               >
@@ -145,7 +130,7 @@ const Header = () => {
             </li>
           ))}
         </ul>
-      </div>{" "}
+      </div>
     </div>
   );
 };

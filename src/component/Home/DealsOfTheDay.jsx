@@ -1,90 +1,92 @@
 import React from "react";
 import { FaArrowRight } from "react-icons/fa6";
 import { Link } from "react-router-dom";
-import productData from "../../assets/productData";
 import ReactStars from "react-rating-stars-component";
-
+import productData from "../../assets/productData";
 
 const DealsOfTheDay = () => {
-  // Filter products with a discount
   const discountedProducts = productData.filter(
     (product) => product.discount && product.onSale
   );
 
   return (
-    <div className="md:mx-20 mx-3 py-8">
-      {/* Header section */}
-      <div className="flex flex-col lg:flex-row items-center lg:justify-between justify-center mb-8">
-        <div className="lg:text-start text-center">
-          <span className="text-sm lg:block hidden text-gray-800">Today Deals</span>
-          <h2 className="text-3xl font-bold text-primary">
-            <span className="text-secondary">Deals</span> of the Day
-          </h2>
-        </div>
-        <p className="max-w-md text-gray-500 mt-3 md:mt-0">
-          Sed ut perspiciatis unde omnis iste natus error sit voluptatem
-          accusantium doloremque laudantium, totam rem aperiam,
+    <section className="md:mx-20 mx-3 py-14">
+      {/* ===== Heading ===== */}
+      <div className="text-center mb-10">
+        <span className="text-sm font-medium tracking-wide text-gray-500">
+          Today Deals
+        </span>
+        <h2 className="text-4xl font-bold text-gray-900 mt-2 uppercase">
+          Deals <span className="text-secondary">of the Day</span>
+        </h2>
+        <p className="text-gray-500 max-w-xl mx-auto mt-3">
+          Trending premium products with exclusive deals — grab yours before the offer ends!
         </p>
       </div>
 
-      {/* Product deals grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 ">
+      {/* ===== Product deals ===== */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
         {discountedProducts.map((product) => (
           <div
             key={product.id}
-            className=" bg-gray-50 rounded-2xl overflow-hidden w-full shadow flex gap-5 md:h-[40vh]"
+            className="flex gap-5 bg-white/80 backdrop-blur-lg rounded-3xl overflow-hidden shadow-xl border border-gray-200 hover:shadow-2xl transition-all duration-300 hover:scale-[1.01] md:h-[40vh]"
           >
-            <div className="flex items-center w-1/2 justify-between relative">
-              <span className="bg-primary/70 absolute top-1 left-1 text-white text-xs px-3 py-1 rounded-full font-semibold">
+            {/* Product Image */}
+            <div className="relative w-1/2">
+              <span className="absolute top-3 left-3 bg-secondary text-white text-xs px-3 py-1 rounded-full font-semibold shadow-md">
                 {product.discount}
               </span>
 
               <img
                 src={product.image}
                 alt={product.name}
-                className=" h-full object-cover w-full"
+                className="object-cover w-full h-full rounded-l-3xl"
               />
             </div>
 
-            <div className=" w-1/2 py-5 mx-2">
-              <div className="mb-2">
+            {/* Product Details */}
+            <div className="w-1/2 px-4 py-6 flex flex-col justify-between">
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900">
+                  {product.name}
+                </h3>
 
-                <h3 className="font-semibold">{product.name}</h3>
-              </div>
-              <div className="flex items-center  gap-2 mb-2">
-                <span className="text-lg font-bold text-gray-800">
-                  ${product.new_price.toFixed(2)}
-                </span>
-                <span className="line-through text-gray-400 text-sm">
-                  ${product.old_price.toFixed(2)}
-                </span>
-              </div>
-              <div className="flex items-center gap-1 mb-2">
+                <div className="flex items-center gap-3 mt-2">
+                  <span className="text-xl font-bold text-gray-900">
+                    ${product.new_price.toFixed(2)}
+                  </span>
+                  <span className="line-through text-gray-400 text-sm">
+                    ${product.old_price.toFixed(2)}
+                  </span>
+                </div>
+
+                <div className="flex items-center mt-2">
                   <ReactStars
                     count={5}
-                    size={24}
+                    size={20}
                     value={product.ratingValue}
                     edit={false}
                     char="★"
                     color="#e5e7eb"
-                    activeColor="#facc15"
+                    activeColor="#fbbf24"
                   />
+                </div>
+
+                <p className="text-xs text-gray-500 mt-3 leading-relaxed">
+                  {product.description}
+                </p>
               </div>
-              <p className="text-xs text-gray-600 mb-4">
-                {product.description}
-              </p>
+
               <Link to="/product">
-                <button className=" text-secondary  font-semibold flex items-center justify-start w-full gap-2">
-                  Shop Now <FaArrowRight/>
+                <button className="text-secondary font-semibold flex items-center gap-2 hover:gap-3 transition-all duration-300">
+                  Shop Now <FaArrowRight />
                 </button>
               </Link>
             </div>
           </div>
         ))}
       </div>
-
-
-    </div>
+    </section>
   );
 };
 

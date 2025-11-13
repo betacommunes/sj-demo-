@@ -1,123 +1,166 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { FaArrowRight } from "react-icons/fa6";
-import productData from "../../assets/productData";
+import { MdKeyboardArrowLeft, MdKeyboardArrowRight } from "react-icons/md";
+import { motion } from "framer-motion";
+import { FaLeaf, FaTruckFast, FaStar } from "react-icons/fa6";
 
-const calculateTimeLeft = (endDate) => {
-  const difference = +new Date(endDate) - +new Date();
-  let timeLeft = {
-    days: "00",
-    hours: "00",
-    minutes: "00",
-    seconds: "00",
-  };
-
-  if (difference > 0) {
-    timeLeft = {
-      days: String(Math.floor(difference / (1000 * 60 * 60 * 24))).padStart(
-        2,
-        "0"
-      ),
-      hours: String(Math.floor((difference / (1000 * 60 * 60)) % 24)).padStart(
-        2,
-        "0"
-      ),
-      minutes: String(Math.floor((difference / 1000 / 60) % 60)).padStart(
-        2,
-        "0"
-      ),
-      seconds: String(Math.floor((difference / 1000) % 60)).padStart(2, "0"),
-    };
-  }
-
-  return timeLeft;
-};
+const saleProducts = [
+  {
+    id: 1,
+    name: "Desi Ghee Jar",
+    image: "https://thalnaturals.com/cdn/shop/files/cow.jpg?v=1745580407",
+    saleEnd: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
+  },
+  {
+    id: 2,
+    name: "Dry Fruits Bowl",
+    image: "https://thalnaturals.com/cdn/shop/files/Best_Nuts_Front.jpg?v=1741853783",
+    saleEnd: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000),
+  },
+];
 
 const FlashSale = () => {
-  const saleProducts = productData.filter(
-    (product) => product.onSale && product.saleEnd
-  );
-
-  const [timers, setTimers] = useState({});
+  const [currentIndex, setCurrentIndex] = useState(0);
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      const newTimers = {};
-      saleProducts.forEach((product) => {
-        newTimers[product.id] = calculateTimeLeft(product.saleEnd);
-      });
-      setTimers(newTimers);
-    }, 1000);
+    const auto = setInterval(() => {
+      setCurrentIndex((prev) =>
+        prev === saleProducts.length - 1 ? 0 : prev + 1
+      );
+    }, 5000);
+    return () => clearInterval(auto);
+  }, []);
 
-    return () => clearInterval(interval);
-  }, [saleProducts]);
+  const next = () =>
+    setCurrentIndex((prev) =>
+      prev === saleProducts.length - 1 ? 0 : prev + 1
+    );
+  const prev = () =>
+    setCurrentIndex((prev) =>
+      prev === 0 ? saleProducts.length - 1 : prev - 1
+    );
+
+  const current = saleProducts[currentIndex];
 
   return (
-    <div className="md:px-20 px-3 flex justify-center items-center lg:h-[80vh]">
-      <div className="flex md:flex-row flex-col py-10 gap-10 w-full h-full">
-        {/* Left Side: Offer Details */}
-        {saleProducts[0] && (
-          <div className="md:w-2/3 w-full flex flex-col justify-center items-center p-6 bg-gray-50 rounded-2xl px-2">
-            <h2 className="text-2xl font-semibold text-gray-800 mb-2">
-              Flash <span className="text-secondary">Sale!</span>
-            </h2>
-            <p className="text-gray-600 mb-6 text-center">
-              Get <span className="text-secondary">25% off</span> - Limited Time
-              Offer!
-            </p>
-            <div className="flex items-start space-x-6 mb-6">
-              <div className="flex flex-col items-center">
-                <span className="text-3xl font-bold text-gray-800">
-                  {timers[saleProducts[0].id]?.days || "00"}
-                </span>
-                <span className="text-xs text-gray-500 mt-1">Days</span>
-              </div>
-              <span className="text-2xl font-bold text-gray-800">:</span>
-              <div className="flex flex-col items-center">
-                <span className="text-3xl font-bold text-gray-800">
-                  {timers[saleProducts[0].id]?.hours || "00"}
-                </span>
-                <span className="text-xs text-gray-500 mt-1">Hours</span>
-              </div>
-              <span className="text-2xl font-bold text-gray-800">:</span>
-              <div className="flex flex-col items-center">
-                <span className="text-3xl font-bold text-gray-800">
-                  {timers[saleProducts[0].id]?.minutes || "00"}
-                </span>
-                <span className="text-xs text-gray-500 mt-1">Minutes</span>
-              </div>
-              <span className="text-2xl font-bold text-gray-800">:</span>
-              <div className="flex flex-col items-center">
-                <span className="text-3xl font-bold text-gray-800">
-                  {timers[saleProducts[0].id]?.seconds || "00"}
-                </span>
-                <span className="text-xs text-gray-500 mt-1">Seconds</span>
-              </div>
-            </div>
-            <Link to="/product">
-              <button className="flex items-center justify-center gap-2 bg-primary hover:bg-opacity-95 text-white px-6 py-2 rounded-full font-semibold transition">
-                Shop Now
-                <FaArrowRight />
-              </button>
-            </Link>
-          </div>
-        )}
+    <div className="w-full bg-gradient-to-b from-[#fff8f0] to-white py-16 px-6 md:px-20 flex flex-col lg:flex-row items-center justify-between gap-10 overflow-hidden">
 
-        {/* Right Side: Images from saleProducts */}
-        <div className="w flex justify-center items-center gap-4 ">
-          <div className="flex flex-row gap-4 md:h-full h-[40vh] overflow-hidden">
-            {saleProducts.slice(0, 2).map((product) => (
-              <img
-                key={product.id}
-                src={product.image}
-                alt={product.name}
-                className="rounded-3xl object-cover h-full w-full "
-                style={{ objectPosition: "center" }}
+      {/* LEFT MODERN SECTION */}
+      <motion.div
+        initial={{ x: -40, opacity: 0 }}
+        whileInView={{ x: 0, opacity: 1 }}
+        transition={{ duration: 0.7 }}
+        className="lg:w-1/2 w-full text-center lg:text-left space-y-8 flex flex-col items-center lg:items-start"
+      >
+        {/* Gradient Badge */}
+        <div className="bg-gradient-to-r from-secondary to-primary text-white px-6 py-2 rounded-full text-sm font-semibold shadow-md">
+          Deal of the Week 🌿
+        </div>
+
+        {/* Headline */}
+        <h2 className="text-5xl font-extrabold leading-tight text-gray-900">
+          Elevate Your <span className="text-secondary">Natural Living</span>
+        </h2>
+
+        {/* Sub Text */}
+        <p className="text-gray-600 text-lg max-w-md mx-auto lg:mx-0">
+          Taste the purity of nature. Discover handcrafted, chemical-free products made with love & tradition.
+        </p>
+
+        {/* Feature Icons */}
+        <div className="flex justify-center lg:justify-start gap-6 mt-4 text-primary">
+          <div className="flex flex-col items-center text-center">
+            <FaLeaf size={28} />
+            <span className="text-sm text-gray-600 mt-1">100% Natural</span>
+          </div>
+          <div className="flex flex-col items-center text-center">
+            <FaTruckFast size={28} />
+            <span className="text-sm text-gray-600 mt-1">Free Delivery</span>
+          </div>
+          <div className="flex flex-col items-center text-center">
+            <FaStar size={28} />
+            <span className="text-sm text-gray-600 mt-1">Pure Taste</span>
+          </div>
+        </div>
+
+        {/* CTA Button */}
+        <Link to="/product">
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            className="relative mt-8 px-10 py-3 rounded-full font-semibold text-white bg-gradient-to-r from-primary to-secondary shadow-lg overflow-hidden"
+          >
+            <span className="relative z-10 flex items-center gap-2">
+              Explore Products <FaArrowRight />
+            </span>
+            <span className="absolute inset-0 bg-white/10 hover:bg-white/20 transition-all"></span>
+          </motion.button>
+        </Link>
+      </motion.div>
+
+      {/* RIGHT IMAGE SLIDER */}
+      <motion.div
+        initial={{ x: 40, opacity: 0 }}
+        whileInView={{ x: 0, opacity: 1 }}
+        transition={{ duration: 0.7 }}
+        className="lg:w-1/2 w-full relative"
+      >
+        <div className="relative h-[65vh] rounded-2xl overflow-hidden shadow-xl">
+          {saleProducts.map((p, i) => (
+            <motion.img
+              key={p.id}
+              src={p.image}
+              alt={p.name}
+              className="absolute w-full h-full object-cover rounded-2xl"
+              animate={{
+                opacity: i === currentIndex ? 1 : 0,
+                scale: i === currentIndex ? 1 : 1.05,
+              }}
+              transition={{ duration: 0.8, ease: "easeInOut" }}
+            />
+          ))}
+
+          {/* Overlay */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+
+          {/* Caption */}
+          <motion.div
+            key={current.name}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="absolute bottom-6 left-0 w-full text-center text-white font-semibold text-lg bg-black/40 py-2 backdrop-blur-sm"
+          >
+            {current.name}
+          </motion.div>
+
+          {/* Controls */}
+          <button
+            onClick={prev}
+            className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-primary p-2 rounded-full shadow-md"
+          >
+            <MdKeyboardArrowLeft size={26} />
+          </button>
+          <button
+            onClick={next}
+            className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-primary p-2 rounded-full shadow-md"
+          >
+            <MdKeyboardArrowRight size={26} />
+          </button>
+
+          {/* Dots */}
+          <div className="absolute bottom-3 w-full flex justify-center gap-2">
+            {saleProducts.map((_, i) => (
+              <div
+                key={i}
+                className={`w-3 h-3 rounded-full ${
+                  i === currentIndex ? "bg-secondary scale-110" : "bg-white/60"
+                } transition-all duration-300`}
               />
             ))}
           </div>
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 };
